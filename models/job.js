@@ -17,7 +17,7 @@ var resumeSchema = new mongoose.Schema({
     {
         type: Number,
         required: true,
-        default: 0
+        default: Math.random()
     },
     jobId:
     {

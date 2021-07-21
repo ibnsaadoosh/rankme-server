@@ -1,6 +1,6 @@
 const express = require('express');
 const multer = require('multer');
-const { populate } = require('../models/job');
+const { populate, findByIdAndRemove } = require('../models/job');
 const Jobs = require('../models/job');
 const fsExtra = require('fs-extra');
 const dirPath = 'public/resumes';
@@ -41,7 +41,7 @@ fileUpload.route('/')
     Jobs.create(req.body)
     .then((job) => {
         req.files.map((file) => {
-            job.resumes = job.resumes.concat({filename: file.filesname, path: file.path, percentage: file.percentage, jobId: job._id});
+            job.resumes = job.resumes.concat({filename: file.filesname, path: file.path, percentage: Math.random(), jobId: job._id});
         });
         job.save()
         .then((job) => {
@@ -58,12 +58,56 @@ fileUpload.route('/')
     res.end('PUT operation not supported on /jobs');
 })
 .delete((req, res, next) => {
-    fsExtra.emptyDirSync(dirPath);
+    fsExtra.emptyDir(dirPath)
+    .then()
+    .catch(err => next(err));
+
     Jobs.deleteMany({})
     .then((jobs) => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
         res.json({sucess: true})
+    }, (err) => next(err))
+    .catch((err) => next(err));
+});
+
+fileUpload.route('/:jobID')
+.get((req, res, next) => {
+    Jobs.findById(req.params.jobID)
+    .then((job) => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(job);
+    }, (err) => next(err))
+    .catch((err) => next(err));
+})
+
+.post((req, res, next) => {
+    res.statusCode = 403;
+    res.end('Post operation not supported no /jobs/'+ req.params.jobID);
+})
+
+.put((req, res, next) => {
+    Jobs.findByIdAndUpdate(req.params.jobID,
+                           {$set: req.body},
+                           {new: true})
+    .then((job) => {
+        res.statusCode = 200,
+        res.setHeader('Content-Type', 'application/json'),
+        res.json(job);
+    }, (err) => next(err))
+    .catch((err) => next(err));
+})
+
+.delete((req, res, next) => {
+    Jobs.findByIdAndRemove(req.params.jobID)
+    .then((job) => {
+        job.resumes.map((resume) => {
+            fsExtra.removeSync(resume.path);
+        });
+        res.statusCode = 200,
+        res.setHeader('Content-Type', 'application/json');
+        res.json(job);
     }, (err) => next(err))
     .catch((err) => next(err));
 });

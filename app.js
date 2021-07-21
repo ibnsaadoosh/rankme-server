@@ -11,7 +11,7 @@ const mongoose = require('mongoose');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var fileUploadRouter = require('./routes/fileUpload');
+var jobsRouter = require('./routes/jobs');
 const { RequestHeaderFieldsTooLarge } = require('http-errors');
 
 const url = 'mongodb://localhost:27017/rankme';
@@ -45,7 +45,7 @@ app.use(passport.session());
 //these roots will be accessible without requiring authentication
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/fileupload', fileUploadRouter);
+app.use('/jobs', jobsRouter);
 
 function auth(req, res, next)
 {

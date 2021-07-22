@@ -1,0 +1,80 @@
+users: id, username, password
+jobs : id, job_title, description, userid
+cv : id, file_name, jobid, cv_path, percentage
+
+------------------------------------------------------------------
+post create_job 	//create
+{
+    "desc": ""
+    "cv_files":
+    [
+
+    ]
+}
+------------------------------------------------------------------
+
+put update_job/:id		//update
+{
+    "desc": "",
+    "files":
+    [
+        
+    ]
+}
+
+------------------------------------------------------------------
+
+delete job/:id
+{
+
+}
+
+------------------------------------------------------------------
+
+get jobs
+{
+    
+}
+
+response
+{
+	[
+		{id, job_title, description}
+	]
+}
+
+
+------------------------------------------------------------------
+
+get job/:id
+{
+
+}
+
+response
+{
+	{id, job_title, description}
+	[
+		cv_name, filepath, percentage
+	]
+
+}
+
+------------------------------------------------------------------
+
+
+delete CVs
+{
+	job_id	
+}
+
+------------------------------------------------------------------
+
+
+delete CVs/:id
+{
+	
+}
+
+
+
